@@ -1,42 +1,69 @@
 const getState = ({ getStore, getActions, setStore }) => {
 	return {
 		store: {
-			demo: [
-				{
-					title: "FIRST",
-					background: "white",
-					initial: "white"
-				},
-				{
-					title: "SECOND",
-					background: "white",
-					initial: "white"
-				}
-			]
+			characters: [],
+			characterInfo: [],
+			planets: [],
+			planetInfo: [],
+			starships: [],
+			starshipInfo: [],
+			favorites: [],
 		},
 		actions: {
-			// Use getActions to call a function within a fuction
-			exampleFunction: () => {
-				getActions().changeColor(0, "green");
-			},
-			loadSomeData: () => {
-				/**
-					fetch().then().then(data => setStore({ "foo": data.bar }))
-				*/
-			},
-			changeColor: (index, color) => {
-				//get the store
+
+			setCharacters: (data) => {
 				const store = getStore();
+				setStore({...store, characters: data})
+			},
 
-				//we have to loop the entire demo array to look for the respective index
-				//and change its color
-				const demo = store.demo.map((elm, i) => {
-					if (i === index) elm.background = color;
-					return elm;
-				});
+			setPlanets: (data) => {
+				const store = getStore();
+				setStore({...store, planets: data})
+			},
 
-				//reset the global store
-				setStore({ demo: demo });
+			setStarships: (data) => {
+				const store = getStore();
+				setStore({...store, starships: data})
+			},
+
+			setCharacterInfo: (data) => {
+				const store = getStore();
+				setStore({...store, characterInfo: data})
+			},
+
+			setPlanetInfo: (data) => {
+				const store = getStore();
+				setStore({...store, planetInfo: data})
+			},	
+
+			setStarshipInfo: (data) => {
+				const store = getStore();
+				setStore({...store, starshipInfo: data})
+			},
+			
+			addFavorites: (type, id) => {
+				const store = getStore();
+				let data = {};
+				data.id = id;
+				data.type = type;
+				if (type === "character") {
+					data.name = store.characters[id-1].name;
+					data.url = `/${type}/${id}`;
+				} else if (type === "planet"){
+					data.name = store.planets[id-1].name;
+					data.url = `/${type}/${id}`;
+				} else {
+					const ship = store.starships.find(starship => starship.uid === id);
+					data.name = ship.name;
+					data.url = `/${type}/${id}`;
+				}
+				setStore({...store, favorites: [...store.favorites, data]});
+			},
+
+			deleteFavorites: (name) => {
+				const store = getStore();
+				const data = store.favorites.filter((f) => (f.name !== name));
+				setStore({...store, favorites: data});
 			}
 		}
 	};
